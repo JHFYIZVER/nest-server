@@ -11,18 +11,17 @@ export class UsersController {
     @Req() request: Request,
     @Res() response: Response
   ): Promise<any> {
-    
-    try{
+    try {
       const users = await this.usersService.getAllUsers();
       return response.status(200).json({
         status: "success",
         message: "Users fetched successfully",
-        result: users
+        result: users,
       });
     } catch (error) {
       return response.status(500).json({
         status: "error",
-        message: error
+        message: error,
       });
     }
   }
