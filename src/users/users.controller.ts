@@ -1,28 +1,27 @@
-import { Controller, Get, Req, Res } from "@nestjs/common";
+import { Controller, Get, HttpException, HttpStatus } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { Request, Response } from "express";
 
 @Controller("users")
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  async getAllUsers(
-    @Req() request: Request,
-    @Res() response: Response
-  ): Promise<any> {
+  async getAllUsers() {
     try {
       const users = await this.usersService.getAllUsers();
-      return response.status(200).json({
+      return {
         status: "success",
         message: "Users fetched successfully",
         result: users,
-      });
+      };
     } catch (error) {
-      return response.status(500).json({
-        status: "error",
-        message: error,
-      });
+      throw new HttpException(
+        {
+          status: "error",
+          message: error.message || "An unexpected error occurred",
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }

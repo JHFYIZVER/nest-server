@@ -1,14 +1,16 @@
-import { Body, Controller, Post, Req, Res } from "@nestjs/common";
+import { Body, Controller, Post, Req, Res, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { Request, Response } from "express";
 import { LoginDto } from "./dto/login-user.dto";
 import { RegisterDto } from "./dto/register-user.dto";
+import { JwtAuthGuard } from "./conception/auth.guard";
 
 @Controller("auth")
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post("/login")
+  @UseGuards(JwtAuthGuard)
   async login(
     @Req() request: Request,
     @Res() response: Response,
@@ -30,6 +32,7 @@ export class AuthController {
   }
 
   @Post("/registration")
+  @UseGuards(JwtAuthGuard)
   async registration(
     @Req() request: Request,
     @Res() response: Response,

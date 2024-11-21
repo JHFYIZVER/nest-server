@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from "@nestjs/common";
 import { Users } from "./users.model";
 import { PrismaService } from "src/prisma.service";
 
@@ -6,8 +10,16 @@ import { PrismaService } from "src/prisma.service";
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async getAllUsers(): Promise<Users[]> {
-    return this.prisma.user.findMany();
+  async getAllUsers(): Promise<any[]> {
+    try {
+      const users = await this.prisma.user.findMany();
+      return users.map((user) => ({
+        ...user,
+        phone: user.phone.toString(),
+      }));
+    } catch (error) {
+      throw new InternalServerErrorException("Failed to fetch users");
+    }
   }
 
   async registration(data: Users): Promise<Users> {
