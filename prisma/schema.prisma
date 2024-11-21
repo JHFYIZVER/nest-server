@@ -1,0 +1,102 @@
+enum Role {
+  USER
+  ADMIN
+  TravelAgent
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(40)
+  surname String @db.VarChar(40)
+  email String @unique
+  phone Int @unique
+  password String @db.VarChar(40)
+  role Role
+  order Order?
+}
+
+model Airlines{
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(40)
+  logo String
+  plane String @db.VarChar(40)
+  tour Tour[]
+}
+
+model TravelAgency{
+  id Int @id @default(autoincrement())
+  name String @db.VarChar(40)
+  tour Tour[]
+}
+
+model Tour {
+  id Int @id @default(autoincrement())
+  title String
+  location String
+  travelAgency TravelAgency @relation(fields: [travelAgencyId], references: [id])
+  travelAgencyId Int
+  airlines Airlines @relation(fields: [airlinesId], references: [id])
+  airlinesId Int
+  description String @db.Text
+  price Int
+  orderTour OrderTour?
+  includes Includes[]
+  notIncludes NotIncludes[]
+  pictures Pictures[]
+  data Data?
+}
+
+model Order{
+  id Int @id @default(autoincrement())
+  user User @relation(fields: [userId], references: [id])
+  userId Int @unique
+  orderTour OrderTour[]
+}
+
+model OrderTour {
+  id Int @id @default(autoincrement())
+  tour Tour @relation(fields: [tourId], references: [id])
+  tourId Int @unique
+  order Order @relation(fields: [orderId], references: [id])
+  orderId Int
+}
+
+model Includes {
+  id Int @id @default(autoincrement())
+  description String
+  tour Tour @relation(fields: [tourId], references: [id])
+  tourId Int 
+}
+
+model NotIncludes {
+  id Int @id @default(autoincrement())
+  description String
+  tour Tour @relation(fields: [tourId], references: [id])
+  tourId Int 
+}
+
+model Data {
+  id Int @id @default(autoincrement())
+  departureDate DateTime
+  returnDate DateTime
+  flightTime String
+  tour Tour @relation(fields: [tourId], references: [id])
+  tourId Int @unique
+}
+
+model Pictures {
+  id Int @id @default(autoincrement())
+  url String
+  tour Tour @relation(fields: [tourId], references: [id])
+  tourId Int 
+}
