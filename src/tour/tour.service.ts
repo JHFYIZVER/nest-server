@@ -20,10 +20,25 @@ export class TourService {
       const tour = await this.prisma.tour.findUnique({
         where: { id: tourId },
       });
+
       const pictures = await this.prisma.pictures.findMany({
         where: { tourId: tourId },
       });
-      return { tour: tour, pictures: pictures };
+
+      const includes = await this.prisma.includes.findMany({
+        where: { tourId: tourId },
+      });
+
+      const notIncludes = await this.prisma.notIncludes.findMany({
+        where: { tourId: tourId },
+      });
+
+      return {
+        tour: tour,
+        pictures: pictures,
+        includes: includes,
+        notIncludes: notIncludes,
+      };
     } catch (error) {
       throw new Error(error);
     }
