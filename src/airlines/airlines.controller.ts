@@ -53,7 +53,7 @@ export class AirlinesController {
 
   @Delete("/:id")
   @UseGuards(AirlinesGuard)
-  async deliteAirlines(@Res() response: Response, @Param("id") id: number) {
+  async deliteAirlines(@Res() response: Response, @Param("id") id: number): Promise<any> {
     try {
       const result = await this.airlinesService.deliteAirlines(id);
       return response.status(200).json({

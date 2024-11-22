@@ -51,7 +51,7 @@ export class TravelAgencyController {
 
   @Delete(":id")
   @UseGuards(TravelAgencyGuard)
-  async deliteTravelAgency(@Res() response: Response, @Param("id") id: number) {
+  async deliteTravelAgency(@Res() response: Response, @Param("id") id: number): Promise<any> {
     try {
       const travelAgency = await this.travelAgencyService.deliteTravelAgency(id);
       return response.status(200).json({
