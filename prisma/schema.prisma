@@ -27,7 +27,7 @@ model User {
 
 model Airlines{
   id Int @id @default(autoincrement())
-  name String @db.VarChar(40)
+  name String @unique @db.VarChar(40)
   logo String
   plane String @db.VarChar(40)
   tour Tour[]
@@ -35,7 +35,7 @@ model Airlines{
 
 model TravelAgency{
   id Int @id @default(autoincrement())
-  name String @db.VarChar(40)
+  name String @unique @db.VarChar(40)
   tour Tour[]
 }
 

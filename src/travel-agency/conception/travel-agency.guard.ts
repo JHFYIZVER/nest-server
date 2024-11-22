@@ -2,7 +2,7 @@ import { ExecutionContext, UnauthorizedException, Injectable } from "@nestjs/com
 import { AuthGuard } from "@nestjs/passport";
 
 @Injectable()
-export class AirlinesGuard extends AuthGuard("airlines") {
+export class TravelAgencyGuard extends AuthGuard("travel-agency") {
   canActivate(context: ExecutionContext) {
     return super.canActivate(context); 
   }
@@ -11,7 +11,7 @@ export class AirlinesGuard extends AuthGuard("airlines") {
       throw err || new UnauthorizedException();
     }
 
-    const requiredRole = "ADMIN"; 
+    const requiredRole = "TravelAgent"; 
     if (user.role !== requiredRole) {
       throw new UnauthorizedException("You do not have the required role");
     }
