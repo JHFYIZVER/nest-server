@@ -42,6 +42,16 @@ export class AuthService {
 
     const user = await this.usersService.registration(createUser);
 
+    const { id } = await this.prisma.user.findUnique({
+      where: { email: user.email },
+    });
+
+    const userOrder = await this.prisma.order.create({
+      data: { userId: id },
+    });
+
+    await Promise.all([userOrder]);
+
     return { token: this.jwtService.sign({ email: user.email }) };
   }
 }

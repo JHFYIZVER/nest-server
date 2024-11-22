@@ -32,6 +32,8 @@ export class UsersService {
       throw new NotFoundException("User already exists");
     }
 
+    
+
     return this.prisma.user.create({ data });
   }
 }

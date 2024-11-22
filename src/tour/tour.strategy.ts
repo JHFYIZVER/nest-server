@@ -5,7 +5,7 @@ import { UnauthorizedException } from "@nestjs/common";
 import { PrismaService } from "src/prisma.service";
 
 @Injectable()
-export class AirlinesStrategy extends PassportStrategy(Strategy, "airlines") {
+export class TourStrategy extends PassportStrategy(Strategy, "tour") {
   constructor(private readonly prisma: PrismaService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
