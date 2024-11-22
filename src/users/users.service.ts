@@ -16,6 +16,7 @@ export class UsersService {
       return users.map((user) => ({
         ...user,
         phone: user.phone.toString(),
+        password: undefined,
       }));
     } catch (error) {
       throw new InternalServerErrorException("Failed to fetch users");
