@@ -66,14 +66,7 @@ export class TourService {
         throw new Error("At least one picture is required");
       }
 
-      const uploadPath = path.resolve(
-        __dirname,
-        "..",
-        "..",
-        "src",
-        "tour",
-        "pictures"
-      );
+      const uploadPath = path.resolve(__dirname, "..", "..", "static");
 
       if (!fs.existsSync(uploadPath)) {
         fs.mkdirSync(uploadPath, { recursive: true });

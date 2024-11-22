@@ -35,6 +35,14 @@ export class AirlinesService {
     }
     fs.writeFileSync(path.join(uploadPath, logoName), logo.buffer);
 
+    const existingAirlines = await this.prisma.airlines.findUnique({
+      where: { name: name },
+    });
+
+    if (existingAirlines) {
+      throw new Error("Airline with this name already exists");
+    }
+
     const airlines = await this.prisma.airlines.create({
       data: {
         name,
@@ -50,20 +58,18 @@ export class AirlinesService {
     try {
       const airlinesId = parseInt(id.toString(), 10);
       const airline = await this.prisma.airlines.findUnique({
-         where: { id: airlinesId },
-       });
-   
-       if (!airline) {
-         throw new Error(`Airline with ID ${id} not found`);
-       }
-      
+        where: { id: airlinesId },
+      });
+
+      if (!airline) {
+        throw new Error(`Airline with ID ${id} not found`);
+      }
+
       const filePath = path.resolve(
         __dirname,
         "..",
         "..",
-        "src",
-        "airlines",
-        "logo",
+        "static",
         airline.logo
       );
 
@@ -72,8 +78,8 @@ export class AirlinesService {
       }
 
       const airlines = await this.prisma.airlines.delete({
-         where: { id: airlinesId },
-       });
+        where: { id: airlinesId },
+      });
       return airlines;
     } catch (error) {
       throw new Error(error);
