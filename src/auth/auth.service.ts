@@ -23,7 +23,7 @@ export class AuthService {
       throw new NotFoundException("User does not exist");
     }
 
-    const hashPassword = bcrypt.compare(password, user.password);
+    const hashPassword = await bcrypt.compare(password, user.password);
     if (!hashPassword) {
       throw new NotFoundException("Password is incorrect");
     }
