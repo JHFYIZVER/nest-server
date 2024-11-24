@@ -5,13 +5,47 @@ import { v4 as uuidv4 } from "uuid";
 import * as fs from "fs";
 import * as path from "path";
 
+interface Params {
+  airlinesId?: number;
+  travelAgencyId?: number;
+  limit: number;
+  page: number;
+}
+
 @Injectable()
 export class TourService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllTours(): Promise<any[]> {
-    const tours = await this.prisma.tour.findMany();
-    return tours;
+  async getAllTours(params: Params): Promise<any> {
+    try {
+      let { airlinesId, travelAgencyId, limit = 4, page = 1 }: Params = params;
+      limit = parseInt(limit.toString(), 10);
+      let offset = (page - 1) * limit;
+
+      if (airlinesId) {
+        airlinesId = parseInt(airlinesId.toString(), 10);
+      }
+
+      if (travelAgencyId) {
+        travelAgencyId = parseInt(travelAgencyId.toString(), 10);
+      }
+
+      const tours = await this.prisma.tour.findMany({
+        where: {
+          airlinesId: airlinesId || undefined,
+          travelAgencyId: travelAgencyId || undefined,
+        },
+        take: limit,
+        skip: offset,
+        orderBy: {
+          id: 'asc', 
+        },
+      });
+
+      return { tour: tours };
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 
   async getTourById(id: number): Promise<any> {

@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Post,
+  Query,
   Res,
   UploadedFiles,
   UseGuards,
@@ -20,8 +21,8 @@ export class TourController {
   constructor(private readonly tourService: TourService) {}
 
   @Get()
-  async getAllTours(): Promise<any[]> {
-    const tours = await this.tourService.getAllTours();
+  async getAllTours(@Query() params: any): Promise<any> {
+    const tours = await this.tourService.getAllTours(params);
     return tours;
   }
 
