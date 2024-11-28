@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Res, UseGuards } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Res,
+  UseGuards,
+} from "@nestjs/common";
 import { OrderService } from "./order.service";
 import { OrderStrategy } from "./order.strategy";
 import { OrderDto } from "./dto/order.dto";
@@ -8,10 +16,10 @@ import { Response } from "express";
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 
-  @Get()
+  @Get("/:orderId")
   @UseGuards(OrderStrategy)
-  async getAllOrders(): Promise<any[]> {
-    return this.orderService.getAllOrders();
+  async getAllOrders(@Param("orderId") orderId: number): Promise<any[]> {
+    return this.orderService.getAllOrders(orderId);
   }
 
   @Post("/add")

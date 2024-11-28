@@ -6,8 +6,12 @@ import { OrderDto } from "./dto/order.dto";
 export class OrderService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllOrders(): Promise<any> {
-    const orders = await this.prisma.orderTour.findMany();
+  async getAllOrders(orderId: number): Promise<any> {
+    const orders = await this.prisma.orderTour.findMany({
+      where: {
+        orderId: parseInt(orderId.toString(), 10),
+      },
+    });
     const tourInfo = await this.prisma.tour.findMany({
       where: {
         id: {

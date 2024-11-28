@@ -6,6 +6,7 @@ import { LoginDto } from "./dto/login-user.dto";
 import * as bcrypt from "bcrypt";
 import { RegisterDto } from "./dto/register-user.dto";
 import { Users } from "src/users/users.model";
+import { Response } from "express";
 @Injectable()
 export class AuthService {
   constructor(
@@ -14,7 +15,7 @@ export class AuthService {
     private readonly usersService: UsersService
   ) {}
 
-  async login(loginDto: LoginDto): Promise<any> {
+  async login(loginDto: LoginDto, res: Response): Promise<any> {
     const { email, password } = loginDto;
 
     const user = await this.prisma.user.findUnique({ where: { email } });
@@ -23,15 +24,29 @@ export class AuthService {
       throw new NotFoundException("User does not exist");
     }
 
+    const { password: _, phone: __, ...userInfo } = user;
+
     const hashPassword = await bcrypt.compare(password, user.password);
     if (!hashPassword) {
       throw new NotFoundException("Password is incorrect");
     }
 
-    return { token: this.jwtService.sign({ email }) };
+    const token = this.jwtService.sign({ email });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3600000,
+      sameSite: "strict",
+    });
+
+    return { message: token, user: userInfo };
   }
 
-  async registration(registrationDto: RegisterDto): Promise<any> {
+  async registration(
+    registrationDto: RegisterDto,
+    res: Response
+  ): Promise<any> {
     const createUser = new Users();
     createUser.name = registrationDto.name;
     createUser.surname = registrationDto.surname;
@@ -52,6 +67,23 @@ export class AuthService {
 
     await Promise.all([userOrder]);
 
-    return { token: this.jwtService.sign({ email: user.email }) };
+    const token = this.jwtService.sign({ email: user.email });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3600000,
+      sameSite: "strict",
+    });
+
+    return { message: "Registration successful" };
+  }
+
+  async check(token: string): Promise<any> {
+    try {
+      return this.jwtService.verify(token);
+    } catch (error) {
+      throw new NotFoundException("User not found");
+    }
   }
 }
